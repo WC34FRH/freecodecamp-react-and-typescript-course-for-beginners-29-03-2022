@@ -22,9 +22,9 @@ const App: React.FC = () => {
       <span className="heading">Taskify</span>
       <InputField toDo={toDo} setToDo={setToDo} handleAdd={handleAdd} />
       <ToDoList toDos={toDos} setToDos={setToDos} />
-      {toDos.map((t) => (
+      {/* {toDos.map((t) => (
         <li>{t.toDo}</li>
-      ))}
+      ))} */}
     </div>
   );
 };
