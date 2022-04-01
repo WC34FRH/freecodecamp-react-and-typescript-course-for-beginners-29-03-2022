@@ -3,14 +3,16 @@ import { ToDo } from "../model";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { MdDone } from "react-icons/md";
 import "./styles.css";
+import { Draggable } from "react-beautiful-dnd";
 
 type Props = {
+  index: number;
   toDo: ToDo;
   toDos: ToDo[];
   setToDos: React.Dispatch<React.SetStateAction<ToDo[]>>;
 };
 
-const SingleToDo = ({ toDo, toDos, setToDos }: Props) => {
+const SingleToDo = ({ index, toDo, toDos, setToDos }: Props) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [editToDo, setEditToDo] = useState<string>(toDo.toDo);
 
@@ -43,39 +45,82 @@ const SingleToDo = ({ toDo, toDos, setToDos }: Props) => {
   }, [edit]);
 
   return (
-    <form className="todos__single" onSubmit={(e) => handleEdit(e, toDo.id)}>
-      {edit ? (
-        <input
-          value={editToDo}
-          onChange={(e) => setEditToDo(e.target.value)}
-          className="todos__single--text"
-        />
-      ) : toDo.isDone ? (
-        <s className="todos__single--text">{toDo.toDo}</s>
-      ) : (
-        <span className="todos__single--text">{toDo.toDo}</span>
-      )}
-
-      <span className="todos__single--text">{toDo.toDo}</span>
-      <div>
-        <span
-          className="icon"
-          onClick={() => {
-            if (!edit && !toDo.isDone) {
-              setEdit(!edit);
-            }
-          }}
+    <Draggable draggableId={toDo.id.toString()} index={index}>
+      {(provided, snapshot) => (
+        <form
+          className={`todos__single ${snapshot.isDragging ? "drag" : ""}`}
+          onSubmit={(e) => handleEdit(e, toDo.id)}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
         >
-          <AiFillEdit />
-        </span>
-        <span className="icon" onClick={() => handleDelete(toDo.id)}>
-          <AiFillDelete />
-        </span>
-        <span className="icon" onClick={() => handleDone(toDo.id)}>
-          <MdDone />
-        </span>
-      </div>
-    </form>
+          {edit ? (
+            <input
+              value={editToDo}
+              onChange={(e) => setEditToDo(e.target.value)}
+              className="todos__single--text"
+            />
+          ) : toDo.isDone ? (
+            <s className="todos__single--text">{toDo.toDo}</s>
+          ) : (
+            <span className="todos__single--text">{toDo.toDo}</span>
+          )}
+
+          <span className="todos__single--text">{toDo.toDo}</span>
+          <div>
+            <span
+              className="icon"
+              onClick={() => {
+                if (!edit && !toDo.isDone) {
+                  setEdit(!edit);
+                }
+              }}
+            >
+              <AiFillEdit />
+            </span>
+            <span className="icon" onClick={() => handleDelete(toDo.id)}>
+              <AiFillDelete />
+            </span>
+            <span className="icon" onClick={() => handleDone(toDo.id)}>
+              <MdDone />
+            </span>
+          </div>
+        </form>
+      )}
+      {/* <form className="todos__single" onSubmit={(e) => handleEdit(e, toDo.id)}>
+        {edit ? (
+          <input
+            value={editToDo}
+            onChange={(e) => setEditToDo(e.target.value)}
+            className="todos__single--text"
+          />
+        ) : toDo.isDone ? (
+          <s className="todos__single--text">{toDo.toDo}</s>
+        ) : (
+          <span className="todos__single--text">{toDo.toDo}</span>
+        )}
+
+        <span className="todos__single--text">{toDo.toDo}</span>
+        <div>
+          <span
+            className="icon"
+            onClick={() => {
+              if (!edit && !toDo.isDone) {
+                setEdit(!edit);
+              }
+            }}
+          >
+            <AiFillEdit />
+          </span>
+          <span className="icon" onClick={() => handleDelete(toDo.id)}>
+            <AiFillDelete />
+          </span>
+          <span className="icon" onClick={() => handleDone(toDo.id)}>
+            <MdDone />
+          </span>
+        </div>
+      </form> */}
+    </Draggable>
   );
 };
 
